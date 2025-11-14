@@ -1,0 +1,10 @@
+{
+"user":{
+    "n" : 2048,
+    "r" : 8,
+    "p" : 1,
+    "salt" : "salt",
+    "dklen" : 64,
+    "password" : "BvT8CDGsS6zvwPuJuBt/Og4M2Qce42P8PWyvFTHwXHYRjYNaS8tc9LVjfyc/SC7yOHrAEt8RZpPGHlHjljYRBw=="
+}
+}
