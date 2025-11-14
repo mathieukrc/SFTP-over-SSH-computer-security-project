@@ -73,3 +73,37 @@ def MAC(user, file_path):
     if user_clearance >= file_clearance:
         return True
     return False
+
+def load_DAC_helper(dac_owners_path):
+    csv_stored=[]
+    with open(dac_owners_path,"r") as csv_file:
+        csv_opened = csv.reader(csv_file,delimiter=",")
+        for row in csv_opened:
+            csv_stored.append(row)
+    return csv_stored
+
+def DAC(user,file_path,action):
+    mode_dict = {7:["r","w","x"],
+                 6:["r","w"],
+                 5:["r","x"],
+                 4:["r"],
+                 3:["w","x"],
+                 2:["w"],
+                 1:["x"],
+                 0:[]}
+    DAC_policy = load_DAC_helper("server/data/dac_owners.csv")
+    for entry in DAC_policy:
+        if entry[0] == file_path:
+            owner = entry[1]
+            group = entry[2]
+            mode = list(str(entry[3]))
+            if user == owner:
+                if action in mode_dict[int(mode[0])]:
+                    return True
+            elif user == group:
+                if action in mode_dict[int(mode[1])]:
+                    return True
+            else:
+                if action in mode_dict[int(mode[2])]:
+                    return True
+    return False
