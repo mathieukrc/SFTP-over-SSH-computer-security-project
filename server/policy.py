@@ -43,11 +43,28 @@ def load_MAC_helper(mac_labels_path):
     with open(mac_labels_path) as json_file:
         json_opened = json.load(json_file)
         return json_opened
-    
+def MAC_path_helper(file_path,MAC_file_policy):
+    splitted_paths = []
+    for path in MAC_file_policy.keys():
+        splitted_paths.append(path.split("/"))
+    splitted_file_path = file_path.split("/")
+    match_list = []
+    for path in splitted_paths:
+        match_list.append(len(set(splitted_file_path)&set(path)))
+    act_file_path = splitted_paths[match_list.index(max(match_list))]
+    act_string = "/"
+    return act_string.join(act_file_path)
+"""
+MAC AT THE MOMENT ALLOWS PEOPLE TO ACCESS FILES IF NOT OTHERWISE SPECIFIED
+IF MAC DEFAULT LABEL AND CLEARANCE CHANGES UPDATE THIS!!!!
+"""
 def MAC(user, file_path):
+    
     MAC_policy = load_MAC_helper("server/data/mac_labels.json")
     MAC_user_policy = MAC_policy["user_clearances"]
     MAC_file_policy = MAC_policy["path_labels"]
+    file_path = MAC_path_helper(file_path,MAC_file_policy)
+    print(file_path)
     MAC_clearance_policy = MAC_policy["security_levels"]
     user_clearance = MAC_clearance_policy.get(MAC_user_policy.get(user,None),None)
     file_clearance = MAC_clearance_policy.get(MAC_file_policy.get(file_path,None),0)
