@@ -1,0 +1,342 @@
+{
+  "directories": {
+    "home": {
+      "owner": "root",
+      "group": "root",
+      "mode": "0o755",
+      "label": "internal"
+    },
+    "home/alice": {
+      "owner": "alice",
+      "group": "alice",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "home/alice/documents": {
+      "owner": "alice",
+      "group": "alice",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "home/alice/.ssh": {
+      "owner": "alice",
+      "group": "alice",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "home/bob": {
+      "owner": "bob",
+      "group": "bob",
+      "mode": "0o700",
+      "label": "internal"
+    },
+    "home/bob/workspace": {
+      "owner": "bob",
+      "group": "bob",
+      "mode": "0o755",
+      "label": "internal"
+    },
+    "home/bob/downloads": {
+      "owner": "bob",
+      "group": "bob",
+      "mode": "0o755",
+      "label": "internal"
+    },
+    "home/eve": {
+      "owner": "eve",
+      "group": "eve",
+      "mode": "0o700",
+      "label": "public"
+    },
+    "home/eve/public": {
+      "owner": "eve",
+      "group": "eve",
+      "mode": "0o755",
+      "label": "public"
+    },
+    "public": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o755",
+      "label": "public"
+    },
+    "public/announcements": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o755",
+      "label": "public"
+    },
+    "public/shared": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o777",
+      "label": "public"
+    },
+    "public/resources": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o755",
+      "label": "public"
+    },
+    "public/resources/documentation": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o755",
+      "label": "public"
+    },
+    "public/resources/templates": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o755",
+      "label": "public"
+    },
+    "internal": {
+      "owner": "root",
+      "group": "staff",
+      "mode": "0o750",
+      "label": "internal"
+    },
+    "internal/projects": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o770",
+      "label": "internal"
+    },
+    "internal/projects/project_alpha": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o770",
+      "label": "internal"
+    },
+    "internal/projects/project_alpha/data": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o770",
+      "label": "internal"
+    },
+    "internal/projects/project_alpha/reports": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o770",
+      "label": "internal"
+    },
+    "internal/projects/project_beta": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o770",
+      "label": "internal"
+    },
+    "internal/reports": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o750",
+      "label": "internal"
+    },
+    "internal/team": {
+      "owner": "root",
+      "group": "staff",
+      "mode": "0o775",
+      "label": "internal"
+    },
+    "confidential": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/finance": {
+      "owner": "root",
+      "group": "finance",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/finance/budgets": {
+      "owner": "root",
+      "group": "finance",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/finance/sensitive": {
+      "owner": "root",
+      "group": "finance",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "confidential/hr": {
+      "owner": "root",
+      "group": "hr",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/hr/employees": {
+      "owner": "root",
+      "group": "hr",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/hr/reviews": {
+      "owner": "root",
+      "group": "hr",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/security": {
+      "owner": "root",
+      "group": "security",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "confidential/security/.hidden": {
+      "owner": "root",
+      "group": "root",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "confidential/security/audit_logs": {
+      "owner": "root",
+      "group": "security",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "confidential/security/incidents": {
+      "owner": "root",
+      "group": "security",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "admin": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "admin/config": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "admin/scripts": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "admin/logs": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "quarantine": {
+      "owner": "root",
+      "group": "security",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "quarantine/suspicious": {
+      "owner": "root",
+      "group": "security",
+      "mode": "0o700",
+      "label": "confidential"
+    },
+    "tmp": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o1777",
+      "label": "public"
+    }
+  },
+  "files": {
+    "home/alice/documents/personal.txt": {
+      "owner": "alice",
+      "group": "alice",
+      "mode": "0o600",
+      "label": "confidential"
+    },
+    "home/alice/documents/notes.md": {
+      "owner": "alice",
+      "group": "alice",
+      "mode": "0o644",
+      "label": "confidential"
+    },
+    "home/bob/workspace/project.txt": {
+      "owner": "bob",
+      "group": "bob",
+      "mode": "0o644",
+      "label": "internal"
+    },
+    "home/eve/public/readme.txt": {
+      "owner": "eve",
+      "group": "eve",
+      "mode": "0o644",
+      "label": "public"
+    },
+    "public/announcements/welcome.txt": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o644",
+      "label": "public"
+    },
+    "public/announcements/news.txt": {
+      "owner": "root",
+      "group": "users",
+      "mode": "0o644",
+      "label": "public"
+    },
+    "internal/projects/project_beta/analysis.csv": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o660",
+      "label": "internal"
+    },
+    "internal/projects/project_beta/results.json": {
+      "owner": "root",
+      "group": "analysts",
+      "mode": "0o660",
+      "label": "internal"
+    },
+    "internal/team/calendar.txt": {
+      "owner": "root",
+      "group": "staff",
+      "mode": "0o664",
+      "label": "internal"
+    },
+    "confidential/finance/budgets/2024.xlsx": {
+      "owner": "root",
+      "group": "finance",
+      "mode": "0o640",
+      "label": "confidential"
+    },
+    "confidential/finance/sensitive/salaries.csv": {
+      "owner": "root",
+      "group": "finance",
+      "mode": "0o600",
+      "label": "confidential"
+    },
+    "confidential/security/.hidden/flag.txt": {
+      "owner": "root",
+      "group": "root",
+      "mode": "0o600",
+      "label": "confidential"
+    },
+    "admin/config/server.conf": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o640",
+      "label": "confidential"
+    },
+    "admin/scripts/backup.sh": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o750",
+      "label": "confidential"
+    },
+    "admin/logs/system.log": {
+      "owner": "root",
+      "group": "admin",
+      "mode": "0o640",
+      "label": "confidential"
+    }
+  }
+}

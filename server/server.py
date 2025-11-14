@@ -2,6 +2,8 @@
 import asyncio, asyncssh, os, struct, stat
 import logging, traceback
 
+from auth import check_valid_credentials
+
 # Console debug logging for AsyncSSH
 logging.basicConfig(
     level=logging.DEBUG,  # or INFO
@@ -362,7 +364,7 @@ class SFTPSession(asyncssh.SSHServerSession):
 # --- Password auth implemented on the server class (no keyword args needed) ---
 def validate_user_password(username, password):
     # TODO: replace with Argon2 verify, lockout, rate-limits, audit, salted, peppered, perhaps, mfa?
-    return username == "bob" and password == "test"
+    return check_valid_credentials(username, password)
 
 class Server(asyncssh.SSHServer):
     # Tell AsyncSSH we will do user auth:
@@ -383,7 +385,7 @@ async def main():
     print(f"Jail root: {JAIL_ROOT}")
     await asyncssh.listen(
         LISTEN_HOST, LISTEN_PORT,
-        server_host_keys=[HOST_KEY_PATH],  # server identity key
+        server_host_keys=[asyncssh.read_private_key(HOST_KEY_PATH, passphrase="")],  # server identity key
         server_factory=Server              # our auth & session handler
     )
     print(f"SFTP listening on {LISTEN_HOST or '0.0.0.0'}:{LISTEN_PORT} (subsystem '{SFTP_SUBSYSTEM_NAME}')")

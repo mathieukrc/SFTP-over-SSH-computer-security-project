@@ -1,0 +1,3 @@
+FLAG{sftp_security_challenge_2024}
+
+Congratulations! You found the hidden flag.
