@@ -43,6 +43,9 @@ def load_MAC_helper(mac_labels_path):
     with open(mac_labels_path) as json_file:
         json_opened = json.load(json_file)
         return json_opened
+"""
+THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
+"""
 def MAC_path_helper(file_path,MAC_file_policy):
     splitted_paths = []
     for path in MAC_file_policy.keys():
@@ -81,6 +84,20 @@ def load_DAC_helper(dac_owners_path):
         for row in csv_opened:
             csv_stored.append(row)
     return csv_stored
+"""
+THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
+"""
+def DAC_path_helper(file_path,DAC_policy):
+    splitted_paths = []
+    for path in DAC_policy:
+        splitted_paths.append(path[0].split("/"))
+    splitted_file_path = file_path.split("/")
+    match_list = []
+    for path in splitted_paths:
+        match_list.append(len(set(splitted_file_path)&set(path)))
+    act_file_path = splitted_paths[match_list.index(max(match_list))]
+    act_string = "/"
+    return act_string.join(act_file_path)
 
 def DAC(user,file_path,action):
     mode_dict = {7:["r","w","x"],
@@ -92,6 +109,8 @@ def DAC(user,file_path,action):
                  1:["x"],
                  0:[]}
     DAC_policy = load_DAC_helper("server/data/dac_owners.csv")
+    file_path = DAC_path_helper(file_path,DAC_policy)
+    print(file_path)
     for entry in DAC_policy:
         if entry[0] == file_path:
             owner = entry[1]
