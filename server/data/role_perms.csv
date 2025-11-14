@@ -1,0 +1,4 @@
+role,resource,read,write,delete
+admin,README.md,read,write,delete
+manager,README.md,read,write
+user,README.md,read
