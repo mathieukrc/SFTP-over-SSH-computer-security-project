@@ -1,9 +1,3 @@
-<<<<<<< Updated upstream
-role,resource,read,write,delete
-admin,README.md,read,write,delete
-manager,README.md,read,write
-user,README.md,read
-=======
 role,resource,read,write,delete
 admin,/,Y,Y,Y
 admin,/admin,Y,Y,Y
@@ -39,4 +33,3 @@ auditor,/,Y,N,N
 test_readonly,/test/read_only,Y,N,N
 test_writeonly,/test/write_only,N,Y,N
 test_nodelete,/test,Y,Y,N
->>>>>>> Stashed changes
