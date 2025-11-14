@@ -38,3 +38,21 @@ def RBAC(user, resource, action):
                 if action in resource_perms:
                     return True
     return False
+
+def load_MAC_helper(mac_labels_path):
+    with open(mac_labels_path) as json_file:
+        json_opened = json.load(json_file)
+        return json_opened
+    
+def MAC(user, file_path):
+    MAC_policy = load_MAC_helper("server/data/mac_labels.json")
+    MAC_user_policy = MAC_policy["user_clearances"]
+    MAC_file_policy = MAC_policy["path_labels"]
+    MAC_clearance_policy = MAC_policy["security_levels"]
+    user_clearance = MAC_clearance_policy.get(MAC_user_policy.get(user,None),None)
+    file_clearance = MAC_clearance_policy.get(MAC_file_policy.get(file_path,None),0)
+    if user_clearance is None:
+        return False
+    if user_clearance >= file_clearance:
+        return True
+    return False

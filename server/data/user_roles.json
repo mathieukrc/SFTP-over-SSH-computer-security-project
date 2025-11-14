@@ -1,10 +1,4 @@
 {
-<<<<<<< Updated upstream
-    "user1" : ["admin","user","manager"],
-    "jason" : ["admin"],
-    "stephen" : ["user"],
-    "stacy" : ["manager"]
-=======
   "alice": [
     "admin",
     "auditor"
@@ -16,5 +10,4 @@
   "eve": [
     "guest"
   ]
->>>>>>> Stashed changes
 }
