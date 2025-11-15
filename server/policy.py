@@ -41,10 +41,22 @@ def RBAC_path_helper(file_path,paths):
 """
 NEED TO IMPLEMENT ALLOWED AND DENIED PERMISSION OVERRIDES
 """
-def RBAC(user, file_path, action):
+def RBAC(user, file_path, action,allow_dict=None,deny_dict=None):
     RBAC_policy, paths = load_RBAC_helper("server/data/user_roles.json","server/data/role_perms.csv")
     file_path = RBAC_path_helper(file_path,paths)
-    print(file_path)
+    if deny_dict is not None:
+        user_deny = deny_dict.get(user,None)
+        if user_deny is not None:
+            file_path_deny = user_deny.get(file_path,None)
+            if file_path_deny is not None and action in file_path_deny:
+                return False
+            
+    if allow_dict is not None:
+        user_allow = allow_dict.get(user,None)
+        if user_allow is not None:
+            file_path_allow = user_allow.get(file_path,None)
+            if file_path_allow is not None and action in file_path_allow:
+                return True
     user_roles = RBAC_policy.get(user,None)
     if user_roles is None:
         return False
@@ -62,6 +74,7 @@ def RBAC(user, file_path, action):
                 if resource_perms_dict.get(action,"N") == "Y":
                     return True
     return False
+
 def load_MAC_helper(mac_labels_path):
     with open(mac_labels_path) as json_file:
         json_opened = json.load(json_file)
