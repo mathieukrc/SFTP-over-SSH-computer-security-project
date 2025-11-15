@@ -1,0 +1,13 @@
+{
+  "alice": [
+    "admin",
+    "auditor"
+  ],
+  "bob": [
+    "developer",
+    "employee"
+  ],
+  "eve": [
+    "guest"
+  ]
+}
