@@ -57,11 +57,11 @@ def RBAC(user, file_path, action):
                 "read" : resource_perms[0],
                 "write" : resource_perms[1],
                 "delete" : resource_perms[2],
+                "execute": resource_perms[3]
             }
                 if resource_perms_dict.get(action,"N") == "Y":
                     return True
     return False
-
 def load_MAC_helper(mac_labels_path):
     with open(mac_labels_path) as json_file:
         json_opened = json.load(json_file)
@@ -149,11 +149,14 @@ def DAC(user,file_path,action):
                 if action in mode_dict[int(mode[2])]:
                     return True
     return False
-"""
-NEED TO FIX
-MAC AND RBAC SHOULD WORK TOGETHER BUT DAC USES DIFFERENT NOTATION FOR ACTION AS WELL AS DIFFERENT ACTION LIST
-"""
+
 def composite_rule(user,file_path,action):
-    if RBAC(user,file_path,action) and MAC(user,file_path) and DAC(user,file_path,action):
+    DAC_dict = {
+        "read" : "r",
+        "write" : "w",
+        "delete" : "w",
+        "execute" : "x",
+    }
+    if RBAC(user,file_path,action) and MAC(user,file_path) and DAC(user,file_path,DAC_dict[action]):
         return True
     return False
