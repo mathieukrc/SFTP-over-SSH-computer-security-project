@@ -27,17 +27,39 @@ def load_RBAC_helper(user_roles_path, role_perms_path):
 """
 THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
 """
-def RBAC_path_helper(file_path,paths):
-    splitted_paths = []
+def RBAC_path_helper(file_path, paths):
+    """Find the longest prefix match for file_path in available paths"""
+    # Normalize the file path
+    file_path = file_path.strip('/')
+    file_parts = file_path.split('/') if file_path else []
+    
+    best_match = '/'
+    best_match_length = 0
+    
     for path in paths:
-        splitted_paths.append(path.split("/"))
-    splitted_file_path = file_path.split("/")
-    match_list = []
-    for path in splitted_paths:
-        match_list.append(len(set(splitted_file_path)&set(path)))
-    act_file_path = splitted_paths[match_list.index(max(match_list))]
-    act_string = "/"
-    return act_string.join(act_file_path)
+        path = path.strip('/')
+        path_parts = path.split('/') if path else []
+        
+        # Check if this path is a prefix of file_path
+        if len(path_parts) > len(file_parts):
+            continue
+        
+        # For root path
+        if path == '' or path == '/':
+            if best_match_length == 0:
+                best_match = '/'
+            continue
+            
+        is_prefix = all(
+            file_parts[i] == path_parts[i]
+            for i in range(len(path_parts))
+        )
+        
+        if is_prefix and len(path_parts) > best_match_length:
+            best_match = '/' + '/'.join(path_parts)
+            best_match_length = len(path_parts)
+    
+    return best_match
 """
 NEED TO IMPLEMENT ALLOWED AND DENIED PERMISSION OVERRIDES
 """
@@ -82,17 +104,39 @@ def load_MAC_helper(mac_labels_path):
 """
 THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
 """
-def MAC_path_helper(file_path,MAC_file_policy):
-    splitted_paths = []
+def MAC_path_helper(file_path, MAC_file_policy):
+    """Find the longest prefix match for file_path in MAC policy paths"""
+    # Normalize the file path
+    file_path = file_path.strip('/')
+    file_parts = file_path.split('/') if file_path else []
+    
+    best_match = '/'
+    best_match_length = 0
+    
     for path in MAC_file_policy.keys():
-        splitted_paths.append(path.split("/"))
-    splitted_file_path = file_path.split("/")
-    match_list = []
-    for path in splitted_paths:
-        match_list.append(len(set(splitted_file_path)&set(path)))
-    act_file_path = splitted_paths[match_list.index(max(match_list))]
-    act_string = "/"
-    return act_string.join(act_file_path)
+        path = path.strip('/')
+        path_parts = path.split('/') if path else []
+        
+        # Check if this path is a prefix of file_path
+        if len(path_parts) > len(file_parts):
+            continue
+        
+        # For root path
+        if path == '' or path == '/':
+            if best_match_length == 0:
+                best_match = '/'
+            continue
+            
+        is_prefix = all(
+            file_parts[i] == path_parts[i]
+            for i in range(len(path_parts))
+        )
+        
+        if is_prefix and len(path_parts) > best_match_length:
+            best_match = '/' + '/'.join(path_parts)
+            best_match_length = len(path_parts)
+    
+    return best_match
 """
 MAC AT THE MOMENT ALLOWS PEOPLE TO ACCESS FILES IF NOT OTHERWISE SPECIFIED
 IF MAC DEFAULT LABEL AND CLEARANCE CHANGES UPDATE THIS!!!!
@@ -122,17 +166,39 @@ def load_DAC_helper(dac_owners_path):
 """
 THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
 """
-def DAC_path_helper(file_path,DAC_policy):
-    splitted_paths = []
-    for path in DAC_policy:
-        splitted_paths.append(path[0].split("/"))
-    splitted_file_path = file_path.split("/")
-    match_list = []
-    for path in splitted_paths:
-        match_list.append(len(set(splitted_file_path)&set(path)))
-    act_file_path = splitted_paths[match_list.index(max(match_list))]
-    act_string = "/"
-    return act_string.join(act_file_path)
+def DAC_path_helper(file_path, DAC_policy):
+    """Find the longest prefix match for file_path in DAC policy paths"""
+    # Normalize the file path
+    file_path = file_path.strip('/')
+    file_parts = file_path.split('/') if file_path else []
+    
+    best_match = '/'
+    best_match_length = 0
+    
+    for entry in DAC_policy:
+        path = entry[0].strip('/')
+        path_parts = path.split('/') if path else []
+        
+        # Check if this path is a prefix of file_path
+        if len(path_parts) > len(file_parts):
+            continue
+        
+        # For root path
+        if path == '' or path == '/':
+            if best_match_length == 0:
+                best_match = '/'
+            continue
+            
+        is_prefix = all(
+            file_parts[i] == path_parts[i]
+            for i in range(len(path_parts))
+        )
+        
+        if is_prefix and len(path_parts) > best_match_length:
+            best_match = '/' + '/'.join(path_parts)
+            best_match_length = len(path_parts)
+    
+    return best_match
 """
 VERY UGLY SOLUTION MAYBE MAKE IT MORE NICE
 """
