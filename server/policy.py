@@ -103,7 +103,6 @@ def MAC(user, file_path):
     MAC_user_policy = MAC_policy["user_clearances"]
     MAC_file_policy = MAC_policy["path_labels"]
     file_path = MAC_path_helper(file_path,MAC_file_policy)
-    print(file_path)
     MAC_clearance_policy = MAC_policy["security_levels"]
     user_clearance = MAC_clearance_policy.get(MAC_user_policy.get(user,None),None)
     file_clearance = MAC_clearance_policy.get(MAC_file_policy.get(file_path,None),0)
@@ -134,8 +133,13 @@ def DAC_path_helper(file_path,DAC_policy):
     act_file_path = splitted_paths[match_list.index(max(match_list))]
     act_string = "/"
     return act_string.join(act_file_path)
-
+"""
+VERY UGLY SOLUTION MAYBE MAKE IT MORE NICE
+"""
 def DAC(user,file_path,action):
+    with open("server/data/user_roles.json","r") as json_file:
+        json_opened = json.load(json_file)
+    user_roles = json_opened.get(user,None)
     mode_dict = {7:["r","w","x"],
                  6:["r","w"],
                  5:["r","x"],
@@ -146,7 +150,6 @@ def DAC(user,file_path,action):
                  0:[]}
     DAC_policy = load_DAC_helper("server/data/dac_owners.csv")
     file_path = DAC_path_helper(file_path,DAC_policy)
-    print(file_path)
     for entry in DAC_policy:
         if entry[0] == file_path:
             owner = entry[1]
@@ -158,6 +161,14 @@ def DAC(user,file_path,action):
             elif user == group:
                 if action in mode_dict[int(mode[1])]:
                     return True
+            elif user_roles is not None:
+                for role in user_roles:
+                    if role == owner:
+                        if action in mode_dict[int(mode[0])]:
+                            return True
+                    if role == group:
+                        if action in mode_dict[int(mode[1])]:
+                            return True                        
             else:
                 if action in mode_dict[int(mode[2])]:
                     return True
