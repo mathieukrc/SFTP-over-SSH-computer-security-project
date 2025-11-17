@@ -125,39 +125,39 @@ class TestDAC:
     def test_owner_can_read_own_file(self):
         """DAC: Owner with read permission can read their own file"""
         # alice owns /home/alice with mode 700 (rwx for owner)
-        result = DAC("alice", "/home/alice/test.txt", "r")
+        result = DAC("alice", "/home/alice/documents/personal.txt", "r")
         assert result == True, "Owner should be able to read their own file"
     
     def test_owner_can_write_own_file(self):
         """DAC: Owner with write permission can write to their own file"""
         # alice owns /home/alice with mode 700 (rwx for owner)
-        result = DAC("alice", "/home/alice/test.txt", "w")
+        result = DAC("alice", "/home/alice/documents/personal.txt", "w")
         assert result == True, "Owner should be able to write to their own file"
     
     def test_non_owner_cannot_write_without_permission(self):
         """DAC: Non-owner cannot write to file without permission"""
         # bob tries to write to alice's directory (mode 700 - no other permissions)
-        result = DAC("bob", "/home/alice/test.txt", "w")
+        result = DAC("bob", "/home/alice/documents/personal.txt", "w")
         assert result == False, "Non-owner should not be able to write without permission"
     
     def test_non_owner_cannot_read_without_permission(self):
         """DAC: Non-owner cannot read file without permission"""
         # bob tries to read alice's file (mode 700 - no other permissions)
-        result = DAC("bob", "/home/alice/test.txt", "r")
+        result = DAC("bob", "/home/alice/documents/personal.txt", "r")
         assert result == False, "Non-owner should not be able to read without permission"
     
     def test_group_member_can_read_with_group_permission(self):
         """DAC: Group member can read file when group has read permission"""
         # bob is in bob group, /home/bob has mode 750 (rwxr-x---)
         # bob as group member should have read access
-        result = DAC("bob", "/home/bob/test.txt", "r")
+        result = DAC("bob", "/home/bob/documents/draft.txt", "r")
         assert result == True, "Group member should be able to read with group permission"
     
     def test_directory_execute_bit_affects_listing(self):
         """DAC: Directory execute bit affects ability to list/stat directory"""
         # /test/readonly has mode 444 (r--r--r--) - readable but not executable
         # Without execute, should not be able to traverse
-        result = DAC("bob", "/test/readonly/file.txt", "x")
+        result = DAC("bob", "/test/read_only/readonly.txt", "x")
         assert result == False, "Directory without execute should prevent traversal"
     
     def test_directory_with_execute_allows_traversal(self):
@@ -168,15 +168,20 @@ class TestDAC:
     
     def test_write_only_directory_denies_read(self):
         """DAC: Write-only directory denies read access"""
-        # /test/writeonly has mode 222 (-w--w--w-) - write only
-        result = DAC("bob", "/test/writeonly/file.txt", "r")
+        # /test/write_only has mode 222 (-w--w--w-) - write only
+        result = DAC("bob", "/test/write_only/writeonly.txt", "r")
         assert result == False, "Write-only directory should deny read"
     
     def test_write_only_directory_allows_write(self):
         """DAC: Write-only directory allows write access"""
-        # /test/writeonly has mode 222 (-w--w--w-) - write only
-        result = DAC("bob", "/test/writeonly/file.txt", "w")
+        # /test/write_only has mode 222 (-w--w--w-) - write only
+        result = DAC("bob", "/test/write_only/writeonly.txt", "w")
         assert result == True, "Write-only directory should allow write"
+    def test_no_access_for_directory_allows_write(self):
+        """DAC: No-access directory denies all access"""
+        # /test/noaccess has mode 000 (---------) - no access
+        result = DAC("bob", "/test/no_access/forbidden.txt", "w")
+        assert result == False, "No-access directory should deny all access"
     
     def test_mode_000_denies_all_access(self):
         """DAC: Mode 000 denies all access to non-owner"""
@@ -204,7 +209,7 @@ class TestMAC:
     def test_internal_clearance_cannot_read_confidential(self):
         """MAC: User with internal clearance cannot read confidential files"""
         # bob has internal clearance, /confidential has confidential label
-        result = MAC("bob", "/confidential/secret.txt")
+        result = MAC("bob", "/confidential/flag.txt")
         assert result == False, "Internal clearance should not access confidential files"
     
     def test_public_clearance_cannot_read_internal(self):
@@ -263,13 +268,13 @@ class TestRBAC:
     def test_analyst_can_read_projects(self):
         """RBAC: Analyst role can read files under /internal/projects"""
         # charlie has analyst role with read permission on /internal/projects
-        result = RBAC("charlie", "/internal/projects/project1.txt", "read")
+        result = RBAC("charlie", "/internal/projects/project_alpha/README.md", "read")
         assert result == True, "Analyst should be able to read project files"
     
     def test_analyst_can_write_projects(self):
         """RBAC: Analyst role can write files under /internal/projects"""
         # charlie has analyst role with write permission on /internal/projects
-        result = RBAC("charlie", "/internal/projects/project1.txt", "write")
+        result = RBAC("charlie", "/internal/projects/project_alpha/README.md", "write")
         assert result == True, "Analyst should be able to write project files"
     
     def test_analyst_cannot_mkdir_admin(self):
@@ -281,13 +286,13 @@ class TestRBAC:
     def test_analyst_cannot_read_admin(self):
         """RBAC: Analyst role cannot read files under /admin"""
         # charlie has analyst role, no permissions on /admin
-        result = RBAC("charlie", "/admin/config.txt", "read")
+        result = RBAC("charlie", "/admin/configs/server.conf", "read")
         assert result == False, "Analyst should not be able to read admin files"
     
     def test_adding_admin_role_enables_admin_access(self):
         """RBAC: Adding admin role enables access to /admin"""
         # alice has admin role with full permissions on /admin
-        result = RBAC("alice", "/admin/config.txt", "read")
+        result = RBAC("alice", "/admin/configs/server.conf", "read")
         assert result == True, "Admin role should enable read access to /admin"
         
         result = RBAC("alice", "/admin/newdir", "write")
@@ -318,7 +323,7 @@ class TestRBAC:
         
         # eve normally has guest role with no admin access
         # but allow_dict should grant it
-        result = RBAC("eve", "/admin/config.txt", "read", allow_dict=allow_dict)
+        result = RBAC("eve", "/admin/configs/server.conf", "read", allow_dict=allow_dict)
         assert result == True, "Allow should grant access beyond role permissions"
     
     def test_guest_role_limited_to_public(self):
@@ -338,7 +343,7 @@ class TestRBAC:
         # alice has both admin and auditor roles
         # admin gives full access to /admin
         # auditor gives read access to /
-        result = RBAC("alice", "/admin/config.txt", "write")
+        result = RBAC("alice", "/admin/configs/server.conf", "write")
         assert result == True, "Multiple roles should combine permissions"
 
 
@@ -370,7 +375,7 @@ class TestCompositePolicies:
         # alice has admin role (RBAC allows), secret clearance (MAC allows),
         # and owner/permissions (DAC allows)
         
-        result = composite_rule("alice", "/admin/config.txt", "read")
+        result = composite_rule("alice", "/admin/configs/server.conf", "read")
         assert result == True, "All policies allowing should grant access"
     
     def test_rbac_denies_overrides_others(self):
@@ -378,7 +383,7 @@ class TestCompositePolicies:
         # charlie (analyst) has no RBAC permission for /admin
         # even if DAC and MAC might allow
         
-        result = composite_rule("charlie", "/admin/config.txt", "read")
+        result = composite_rule("charlie", "/admin/configs/server.conf", "read")
         assert result == False, "RBAC denial should override other allows"
     
     def test_path_traversal_denied_by_composite(self):
@@ -432,7 +437,7 @@ class TestAuditLogging:
         
         # Simulate an allow decision
         user = "alice"
-        resource = "/admin/config.txt"
+        resource = "/admin/configs/server.conf"
         action = "read"
         
         # Call composite rule (which should trigger audit)
@@ -441,7 +446,7 @@ class TestAuditLogging:
         # In actual implementation, verify audit log contains:
         # - timestamp
         # - user: alice
-        # - resource: /admin/config.txt
+        # - resource: /admin/configs/server.conf
         # - action: read
         # - decision: allow
         # - dac_result, mac_result, rbac_result
@@ -491,7 +496,7 @@ class TestAuditLogging:
     def test_audit_includes_timestamp_and_session_info(self, audit_log_file):
         """Audit: Record includes timestamp and session information"""
         user = "alice"
-        resource = "/admin/config.txt"
+        resource = "/admin/configs/server.conf"
         action = "write"
         
         decision = composite_rule(user, resource, action)
