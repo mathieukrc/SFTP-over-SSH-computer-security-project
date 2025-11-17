@@ -7,6 +7,9 @@
     "developer",
     "employee"
   ],
+  "charlie": [
+    "analyst"
+  ],
   "eve": [
     "guest"
   ]
