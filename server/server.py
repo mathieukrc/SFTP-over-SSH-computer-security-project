@@ -2,7 +2,7 @@
 import asyncio, asyncssh, os, struct, stat
 import logging, traceback
 
-from auth import check_valid_credentials
+from auth import check_password
 
 # Console debug logging for AsyncSSH
 logging.basicConfig(
@@ -364,7 +364,7 @@ class SFTPSession(asyncssh.SSHServerSession):
 # --- Password auth implemented on the server class (no keyword args needed) ---
 def validate_user_password(username, password):
     # TODO: replace with Argon2 verify, lockout, rate-limits, audit, salted, peppered, perhaps, mfa?
-    return check_valid_credentials(username, password)
+    return check_password(username, password)
 
 class Server(asyncssh.SSHServer):
     # Tell AsyncSSH we will do user auth:
