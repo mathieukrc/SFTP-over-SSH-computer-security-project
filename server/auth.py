@@ -1,16 +1,23 @@
-import hashlib
-import base64
-n = 2048
-r = 8
-p = 1
-salt = "salt"
-dklen = 64
-def check_password(plain_passphrase, hashed_passphrase):
-    plain_passphrase = plain_passphrase.encode("utf-8")
-    hashed_plain_passphrase = hashlib.scrypt(password=plain_passphrase, salt=salt.encode("utf-8"), n=n, r=r, p=p, dklen=dklen)
-    print(hashed_passphrase)
-    print(base64.b64encode(hashed_plain_passphrase).decode("utf-8"))
-    if str(base64.b64encode(hashed_plain_passphrase).decode("utf-8")) == hashed_passphrase:
-        return True
-    else:
-        return False
+import json
+
+import argon2
+
+USER_PATH = "./data/users.json"
+user_file = json.load(open(USER_PATH, "r"))
+
+def check_password(username: str, password: str) -> bool:
+    hasher = argon2.PasswordHasher()
+
+    user = next((u for u in user_file if u["username"] == username), None)
+    if user is not None:
+        hash = user["password_hash"]
+        try:
+            hasher.verify(hash, password)
+            return True
+        except argon2.exceptions.VerifyMismatchError as e:
+            pass
+    return False
+
+
+if __name__ == "__main__":
+    print(check_password("bob", "test"))
