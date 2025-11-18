@@ -1,4 +1,6 @@
-tests/__pycache__/test_sftp.cpython-312-pytest-9.0.1.pyc
-server/__pycache__/policy.cpython-312.pyc
-server/__pycache__/policy.cpython-312.pyc
-server/__pycache__/policy.cpython-312.pyc
+.cache/
+tmp/
+temp/
+__pycache__/
+*.pyc
+sftp_roots/

@@ -121,72 +121,73 @@ def create_role_perms_csv():
     # Format: role, resource, read, write, delete
     permissions = [
         # Admin role - full access to everything
-        ['admin', '/', 'Y', 'Y', 'Y'],
-        ['admin', '/admin', 'Y', 'Y', 'Y'],
-        ['admin', '/confidential', 'Y', 'Y', 'Y'],
-        
+        ['admin', '/', 'Y', 'Y', 'Y','Y'],
+        ['admin', '/admin', 'Y', 'Y', 'Y','Y'],
+        ['admin', '/confidential', 'Y', 'Y', 'Y','Y'],
+        ['admin', '/confidential/.hidden', 'Y', 'Y', 'Y','Y'],
+
         # Security role - read access to confidential, manage security areas
-        ['security', '/confidential', 'Y', 'N', 'N'],
-        ['security', '/admin/logs', 'Y', 'Y', 'N'],
-        ['security', '/admin/configs', 'Y', 'Y', 'N'],
+        ['security', '/confidential', 'Y', 'N', 'N','N'],
+        ['security', '/admin/logs', 'Y', 'Y', 'N','N'],
+        ['security', '/admin/configs', 'Y', 'Y', 'N','N'],
         
         # Finance role - access to finance directories
-        ['finance', '/confidential/finance', 'Y', 'Y', 'N'],
-        ['finance', '/internal/reports', 'Y', 'Y', 'N'],
+        ['finance', '/confidential/finance', 'Y', 'Y', 'N','N'],
+        ['finance', '/internal/reports', 'Y', 'Y', 'N','N'],
         
         # HR role - access to HR data
-        ['hr', '/confidential/hr', 'Y', 'Y', 'N'],
-        ['hr', '/home', 'Y', 'N', 'N'],  # Can read all home dirs for user management
+        ['hr', '/confidential/hr', 'Y', 'Y', 'N','N'],
+        ['hr', '/home', 'Y', 'N', 'N','N'],  # Can read all home dirs for user management
         
         # Manager role - read confidential, write to internal
-        ['manager', '/confidential', 'Y', 'N', 'N'],
-        ['manager', '/internal', 'Y', 'Y', 'Y'],
-        ['manager', '/shared', 'Y', 'Y', 'Y'],
+        ['manager', '/confidential', 'Y', 'N', 'N','N'],
+        ['manager', '/internal', 'Y', 'Y', 'Y','N'],
+        ['manager', '/shared', 'Y', 'Y', 'Y','N'],
         
         # Analyst role - work with projects and reports
-        ['analyst', '/internal/projects', 'Y', 'Y', 'N'],
-        ['analyst', '/internal/reports', 'Y', 'N', 'N'],
-        ['analyst', '/internal/documentation', 'Y', 'N', 'N'],
-        ['analyst', '/shared', 'Y', 'Y', 'N'],
-        ['analyst', '/public', 'Y', 'N', 'N'],
+        ['analyst', '/internal/projects', 'Y', 'Y', 'N','N'],
+        ['analyst', '/internal/reports', 'Y', 'N', 'N','N'],
+        ['analyst', '/internal/documentation', 'Y', 'N', 'N','N'],
+        ['analyst', '/shared', 'Y', 'Y', 'N','N'],
+        ['analyst', '/public', 'Y', 'N', 'N','N'],
         
         # Developer role - project access
-        ['developer', '/internal/projects', 'Y', 'Y', 'Y'],
-        ['developer', '/internal/documentation', 'Y', 'Y', 'N'],
-        ['developer', '/shared', 'Y', 'Y', 'N'],
-        ['developer', '/public', 'Y', 'Y', 'N'],
+        ['developer', '/internal/projects', 'Y', 'Y', 'Y','Y'],
+        ['developer', '/internal/documentation', 'Y', 'Y', 'N','N'],
+        ['developer', '/shared', 'Y', 'Y', 'N','N'],
+        ['developer', '/public', 'Y', 'Y', 'N','N'],
         
         # Employee role - basic internal access
-        ['employee', '/internal', 'Y', 'N', 'N'],
-        ['employee', '/shared', 'Y', 'Y', 'N'],
-        ['employee', '/public', 'Y', 'N', 'N'],
+        ['employee', '/internal', 'Y', 'N', 'N','N'],
+        ['employee', '/shared', 'Y', 'Y', 'N','N'],
+        ['employee', '/public', 'Y', 'N', 'N','N'],
         
         # Contractor role - limited access
-        ['contractor', '/internal/projects', 'Y', 'N', 'N'],
-        ['contractor', '/shared', 'Y', 'Y', 'N'],
-        ['contractor', '/public', 'Y', 'N', 'N'],
+        ['contractor', '/internal/projects', 'Y', 'N', 'N','N'],
+        ['contractor', '/shared', 'Y', 'Y', 'N','N'],
+        ['contractor', '/public', 'Y', 'N', 'N','N'],
         
         # Guest role - minimal access
-        ['guest', '/public', 'Y', 'N', 'N'],
-        ['guest', '/shared/temp', 'Y', 'Y', 'N'],
+        ['guest', '/public', 'Y', 'N', 'N','N'],
+        ['guest', '/shared/temp', 'Y', 'Y', 'N','N'],
         
         # Auditor role - read-only access to everything
-        ['auditor', '/', 'Y', 'N', 'N'],
+        ['auditor', '/', 'Y', 'N', 'N','N'],
         
         # Test roles for specific scenarios
-        ['test_readonly', '/test/read_only', 'Y', 'N', 'N'],
+        ['test_readonly', '/test/read_only', 'Y', 'N', 'N','N'],
         ['test_writeonly', '/test/write_only', 'N', 'Y', 'N'],
-        ['test_nodelete', '/test', 'Y', 'Y', 'N'],
+        ['test_nodelete', '/test', 'Y', 'Y', 'N','N'],
     ]
     
     # Create data directory if it doesn't exist
-    os.makedirs('data', exist_ok=True)
+    os.makedirs('server/data', exist_ok=True)
     
     # Write to CSV
-    csv_file = 'data/role_perms.csv'
+    csv_file = 'server/data/role_perms.csv'
     with open(csv_file, 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['role', 'resource', 'read', 'write', 'delete'])
+        writer.writerow(['role', 'resource', 'read', 'write', 'delete', 'execute'])
         writer.writerows(permissions)
     
     print(f"\n✅ Created {csv_file} with {len(permissions)} permission entries")
@@ -233,14 +234,15 @@ def create_mac_labels_json():
         "user_clearances": {
             "alice": "secret",        # Admin - highest clearance
             "bob": "internal",        # Regular employee
-            "eve": "public"         # Guest/contractor
+            "eve": "public",
+            "joseph": "confidential"         # Guest/contractor
         },
         
         "default_label": "public",
         "default_clearance": "public"
     }
     
-    json_file = 'data/mac_labels.json'
+    json_file = 'server/data/mac_labels.json'
     with open(json_file, 'w') as f:
         json.dump(mac_config, f, indent=2)
     
@@ -258,20 +260,20 @@ def create_dac_owners_csv():
         # Public areas - world readable
         ['/public', 'root', 'root', '755'],
         ['/public/announcements', 'root', 'staff', '755'],
-        ['/public/shared', 'root', 'users', '777'],
+        ['/public/shared', 'root', 'user', '777'],
         
         # Internal areas - group readable
-        ['/internal', 'root', 'employees', '750'],
-        ['/internal/projects', 'root', 'developers', '770'],
-        ['/internal/reports', 'root', 'analysts', '750'],
-        ['/internal/documentation', 'root', 'employees', '750'],
+        ['/internal', 'root', 'employee', '750'],
+        ['/internal/projects', 'root', 'developer', '770'],
+        ['/internal/reports', 'root', 'analyst', '750'],
+        ['/internal/documentation', 'root', 'employee', '750'],
         
         # Confidential areas - restricted
-        ['/confidential', 'root', 'executives', '750'],
+        ['/confidential', 'root', 'executive', '750'],
         ['/confidential/finance', 'root', 'finance', '750'],
-        ['/confidential/strategy', 'root', 'executives', '750'],
+        ['/confidential/strategy', 'root', 'executive', '750'],
         ['/confidential/hr', 'root', 'hr', '750'],
-        ['/confidential/.hidden', 'root', 'root', '700'],
+        ['/confidential/.hidden', 'admin', 'root', '700'],
         
         # User home directories - private
         ['/home', 'root', 'root', '755'],
@@ -280,17 +282,17 @@ def create_dac_owners_csv():
         ['/home/alice/.ssh', 'alice', 'alice', '700'],
         ['/home/bob', 'bob', 'bob', '750'],
         ['/home/bob/documents', 'bob', 'bob', '750'],
-        ['/home/bob/projects', 'bob', 'developers', '750'],
+        ['/home/bob/projects', 'bob', 'developer', '750'],
         ['/home/eve', 'eve', 'eve', '755'],
-        ['/home/eve/public_only', 'eve', 'users', '755'],
+        ['/home/eve/public_only', 'eve', 'user', '755'],
         ['/home/charlie', 'charlie', 'charlie', '750'],
-        ['/home/charlie/analysis', 'charlie', 'analysts', '750'],
+        ['/home/charlie/analysis', 'charlie', 'analyst', '750'],
         
         # Shared workspaces - group writable
-        ['/shared', 'root', 'users', '775'],
+        ['/shared', 'root', 'user', '775'],
         ['/shared/team_alpha', 'root', 'team_alpha', '770'],
         ['/shared/team_beta', 'root', 'team_beta', '770'],
-        ['/shared/temp', 'root', 'users', '777'],
+        ['/shared/temp', 'root', 'user', '777'],
         
         # Admin area - highly restricted
         ['/admin', 'root', 'admin', '750'],
@@ -299,13 +301,13 @@ def create_dac_owners_csv():
         ['/admin/backups', 'root', 'admin', '750'],
         
         # Test areas with specific permissions
-        ['/test', 'root', 'testers', '755'],
-        ['/test/read_only', 'root', 'testers', '444'],
-        ['/test/write_only', 'root', 'testers', '222'],
+        ['/test', 'root', 'tester', '755'],
+        ['/test/read_only', 'root', 'tester', '444'],
+        ['/test/write_only', 'root', 'tester', '222'],
         ['/test/no_access', 'root', 'root', '000'],
     ]
     
-    csv_file = 'data/dac_owners.csv'
+    csv_file = 'server/data/dac_owners.csv'
     with open(csv_file, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['path_prefix', 'owner', 'group', 'default_mode'])
@@ -390,12 +392,12 @@ def create_users_json():
         }
         users_data["users"].append(user_entry)
     
-    json_file = 'data/users.json'
+    json_file = 'server/data/users.json'
     with open(json_file, 'w') as f:
         json.dump(users_data, f, indent=2)
     
     # Also create a passwords file for testing reference (DO NOT use in production!)
-    with open('data/test_passwords.txt', 'w') as f:
+    with open('server/data/test_passwords.txt', 'w') as f:
         f.write("TEST PASSWORDS (Delete in production!):\n")
         f.write("="*40 + "\n")
         for user_info in test_users:
@@ -414,9 +416,12 @@ def create_user_roles_json():
         "alice": ["admin", "auditor"],
         "bob": ["developer", "employee"],
         "eve": ["guest"],
+          "charlie": ["analyst"],
+        "stephen": ["manager","hr"],
+        "joseph": ["root"]
     }
     
-    json_file = 'data/user_roles.json'
+    json_file = 'server/data/user_roles.json'
     with open(json_file, 'w') as f:
         json.dump(user_roles, f, indent=2)
     
@@ -447,6 +452,9 @@ def main():
     
     print("\n5. Creating user-role mappings...")
     create_user_roles_json()
+
+    print("\n5. Creating user data...")
+    create_users_json()
     
     print("\n" + "=" * 60)
     print("✨ Setup Complete!")
