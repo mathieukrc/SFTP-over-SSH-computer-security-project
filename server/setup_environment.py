@@ -8,60 +8,60 @@ from pathlib import Path
 
 directories = [
         # Public area - accessible to all
-        'sftp_root/public',
-        'sftp_root/public/announcements',
-        'sftp_root/public/shared',
-        'sftp_root/public/readme',
+        'server/sftp_root/public',
+        'server/sftp_root/public/announcements',
+        'server/sftp_root/public/shared',
+        'server/sftp_root/public/readme',
         
         # Internal area - for internal users only
-        'sftp_root/internal',
-        'sftp_root/internal/projects',
-        'sftp_root/internal/projects/project_alpha',
-        'sftp_root/internal/projects/project_beta',
-        'sftp_root/internal/reports',
-        'sftp_root/internal/reports/2024',
-        'sftp_root/internal/documentation',
+        'server/sftp_root/internal',
+        'server/sftp_root/internal/projects',
+        'server/sftp_root/internal/projects/project_alpha',
+        'server/sftp_root/internal/projects/project_beta',
+        'server/sftp_root/internal/reports',
+        'server/sftp_root/internal/reports/2024',
+        'server/sftp_root/internal/documentation',
         
         # Confidential area - high security
-        'sftp_root/confidential',
-        'sftp_root/confidential/finance',
-        'sftp_root/confidential/finance/budgets',
-        'sftp_root/confidential/finance/audits',
-        'sftp_root/confidential/strategy',
-        'sftp_root/confidential/hr',
-        'sftp_root/confidential/.hidden',  # Hidden directory for CTF flag
+        'server/sftp_root/confidential',
+        'server/sftp_root/confidential/finance',
+        'server/sftp_root/confidential/finance/budgets',
+        'server/sftp_root/confidential/finance/audits',
+        'server/sftp_root/confidential/strategy',
+        'server/sftp_root/confidential/hr',
+        'server/sftp_root/confidential/.hidden',  # Hidden directory for CTF flag
         
         # User home directories
-        'sftp_root/home',
-        'sftp_root/home/alice',
-        'sftp_root/home/alice/documents',
-        'sftp_root/home/alice/downloads',
-        'sftp_root/home/alice/.ssh',
-        'sftp_root/home/bob',
-        'sftp_root/home/bob/documents',
-        'sftp_root/home/bob/projects',
-        'sftp_root/home/eve',
-        'sftp_root/home/eve/public_only',
-        'sftp_root/home/charlie',
-        'sftp_root/home/charlie/analysis',
+        'server/sftp_root/home',
+        'server/sftp_root/home/alice',
+        'server/sftp_root/home/alice/documents',
+        'server/sftp_root/home/alice/downloads',
+        'server/sftp_root/home/alice/.ssh',
+        'server/sftp_root/home/bob',
+        'server/sftp_root/home/bob/documents',
+        'server/sftp_root/home/bob/projects',
+        'server/sftp_root/home/eve',
+        'server/sftp_root/home/eve/public_only',
+        'server/sftp_root/home/charlie',
+        'server/sftp_root/home/charlie/analysis',
         
         # Shared workspace
-        'sftp_root/shared',
-        'sftp_root/shared/team_alpha',
-        'sftp_root/shared/team_beta',
-        'sftp_root/shared/temp',
+        'server/sftp_root/shared',
+        'server/sftp_root/shared/team_alpha',
+        'server/sftp_root/shared/team_beta',
+        'server/sftp_root/shared/temp',
         
         # Admin area
-        'sftp_root/admin',
-        'sftp_root/admin/logs',
-        'sftp_root/admin/configs',
-        'sftp_root/admin/backups',
+        'server/sftp_root/admin',
+        'server/sftp_root/admin/logs',
+        'server/sftp_root/admin/configs',
+        'server/sftp_root/admin/backups',
         
         # Test area for various permission scenarios
-        'sftp_root/test',
-        'sftp_root/test/read_only',
-        'sftp_root/test/write_only',
-        'sftp_root/test/no_access',
+        'server/sftp_root/test',
+        'server/sftp_root/test/read_only',
+        'server/sftp_root/test/write_only',
+        'server/sftp_root/test/no_access',
     ]
 
 def create_directory_structure():
@@ -73,39 +73,39 @@ def create_directory_structure():
     
     # Create sample files with different content
     sample_files = {
-        'sftp_root/public/welcome.txt': 'Welcome to the SFTP server!\nThis is a public file.',
-        'sftp_root/public/announcements/notice.txt': 'System maintenance scheduled for next week.',
-        'sftp_root/public/shared/public_data.csv': 'id,name,status\n1,Item1,active\n2,Item2,inactive',
+        'server/sftp_root/public/welcome.txt': 'Welcome to the SFTP server!\nThis is a public file.',
+        'server/sftp_root/public/announcements/notice.txt': 'System maintenance scheduled for next week.',
+        'server/sftp_root/public/shared/public_data.csv': 'id,name,status\n1,Item1,active\n2,Item2,inactive',
         
-        'sftp_root/internal/projects/project_alpha/README.md': '# Project Alpha\n\nInternal project documentation.',
-        'sftp_root/internal/projects/project_beta/status.txt': 'Project Beta: In Progress\nDeadline: Q4 2024',
-        'sftp_root/internal/reports/2024/q3_report.txt': 'Q3 2024 Report\n[Internal Use Only]',
-        'sftp_root/internal/documentation/guide.md': '# Internal Guide\n\nFor employees only.',
+        'server/sftp_root/internal/projects/project_alpha/README.md': '# Project Alpha\n\nInternal project documentation.',
+        'server/sftp_root/internal/projects/project_beta/status.txt': 'Project Beta: In Progress\nDeadline: Q4 2024',
+        'server/sftp_root/internal/reports/2024/q3_report.txt': 'Q3 2024 Report\n[Internal Use Only]',
+        'server/sftp_root/internal/documentation/guide.md': '# Internal Guide\n\nFor employees only.',
         
-        'sftp_root/confidential/finance/budgets/2024_budget.txt': 'CONFIDENTIAL: 2024 Annual Budget\n[Restricted Access]',
-        'sftp_root/confidential/finance/audits/audit_2024.txt': 'CONFIDENTIAL: Audit Results 2024',
-        'sftp_root/confidential/strategy/roadmap.txt': 'CONFIDENTIAL: 5-Year Strategic Roadmap',
-        'sftp_root/confidential/hr/salaries.csv': 'CONFIDENTIAL: Employee,Salary\nDO NOT SHARE',
-        'sftp_root/confidential/.hidden/flag.txt': 'FLAG{sftp_security_challenge_2024}\n\nCongratulations! You found the hidden flag.',
+        'server/sftp_root/confidential/finance/budgets/2024_budget.txt': 'CONFIDENTIAL: 2024 Annual Budget\n[Restricted Access]',
+        'server/sftp_root/confidential/finance/audits/audit_2024.txt': 'CONFIDENTIAL: Audit Results 2024',
+        'server/sftp_root/confidential/strategy/roadmap.txt': 'CONFIDENTIAL: 5-Year Strategic Roadmap',
+        'server/sftp_root/confidential/hr/salaries.csv': 'CONFIDENTIAL: Employee,Salary\nDO NOT SHARE',
+        'server/sftp_root/confidential/.hidden/flag.txt': 'FLAG{sftp_security_challenge_2024}\n\nCongratulations! You found the hidden flag.',
         
-        'sftp_root/home/alice/documents/personal.txt': "Alice's personal notes",
-        'sftp_root/home/alice/documents/work.txt': "Alice's work documents",
-        'sftp_root/home/bob/documents/draft.txt': "Bob's draft document",
-        'sftp_root/home/bob/projects/code.py': "# Bob's Python code\nprint('Hello, World!')",
-        'sftp_root/home/eve/public_only/notes.txt': "Eve's public notes",
-        'sftp_root/home/charlie/analysis/data.csv': "Charlie's analysis data",
+        'server/sftp_root/home/alice/documents/personal.txt': "Alice's personal notes",
+        'server/sftp_root/home/alice/documents/work.txt': "Alice's work documents",
+        'server/sftp_root/home/bob/documents/draft.txt': "Bob's draft document",
+        'server/sftp_root/home/bob/projects/code.py': "# Bob's Python code\nprint('Hello, World!')",
+        'server/sftp_root/home/eve/public_only/notes.txt': "Eve's public notes",
+        'server/sftp_root/home/charlie/analysis/data.csv': "Charlie's analysis data",
         
-        'sftp_root/shared/team_alpha/collaboration.txt': 'Team Alpha shared workspace',
-        'sftp_root/shared/team_beta/planning.md': '# Team Beta Planning\n\nShared planning document',
-        'sftp_root/shared/temp/scratch.txt': 'Temporary shared file',
+        'server/sftp_root/shared/team_alpha/collaboration.txt': 'Team Alpha shared workspace',
+        'server/sftp_root/shared/team_beta/planning.md': '# Team Beta Planning\n\nShared planning document',
+        'server/sftp_root/shared/temp/scratch.txt': 'Temporary shared file',
         
-        'sftp_root/admin/logs/access.log': '[ADMIN ONLY] Access log entries',
-        'sftp_root/admin/configs/server.conf': '[ADMIN ONLY] Server configuration',
-        'sftp_root/admin/backups/backup_list.txt': '[ADMIN ONLY] Backup inventory',
+        'server/sftp_root/admin/logs/access.log': '[ADMIN ONLY] Access log entries',
+        'server/sftp_root/admin/configs/server.conf': '[ADMIN ONLY] Server configuration',
+        'server/sftp_root/admin/backups/backup_list.txt': '[ADMIN ONLY] Backup inventory',
         
-        'sftp_root/test/read_only/readonly.txt': 'This file should be read-only for most users',
-        'sftp_root/test/write_only/writeonly.txt': 'This file is for write-only testing',
-        'sftp_root/test/no_access/forbidden.txt': 'This file should not be accessible to regular users',
+        'server/sftp_root/test/read_only/readonly.txt': 'This file should be read-only for most users',
+        'server/sftp_root/test/write_only/writeonly.txt': 'This file is for write-only testing',
+        'server/sftp_root/test/no_access/forbidden.txt': 'This file should not be accessible to regular users',
     }
     
     for file_path, content in sample_files.items():
