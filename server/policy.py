@@ -1,5 +1,9 @@
 import json
 import csv
+from typing import Tuple, Union
+from datetime import datetime
+
+from _pytest.stash import T
 def load_RBAC_helper(user_roles_path, role_perms_path):
     opened_json = None
     opened_csv = None
@@ -272,13 +276,47 @@ def DAC(user,file_path,action):
                 return True
     return False
 
-def composite_rule(user,file_path,action):
+def composite_rule(user,file_path,action, justify=False) -> Union[bool, Tuple[bool, bool, bool, bool]]:
     DAC_dict = {
         "read" : "r",
         "write" : "w",
         "delete" : "w",
         "execute" : "x",
     }
-    if RBAC(user,file_path,action) and MAC(user,file_path) and DAC(user,file_path,DAC_dict[action]):
-        return True
-    return False
+    
+    rbac_accept = RBAC(user,file_path,action) 
+    mac_accept = MAC(user,file_path)
+    dac_accept = DAC(user,file_path,DAC_dict[action])
+
+    if rbac_accept and mac_accept and dac_accept:
+        if not justify:
+            return True
+        else:
+            return True, True, True, True
+    
+    if not justify:
+        return False
+    else:
+        return False, rbac_accept, mac_accept, dac_accept
+
+AUDIT_PATH = "server/audit.jsonl"
+
+def authorize(user:str, op:str, path:str) -> bool:
+    accepted, rbac, mac, dac = composite_rule(user, path, op, True)
+    
+    justification_string = f"RBAC:{"passed" if rbac else "denied"} - MAC:{"passed" if mac else "denied"} - DAC:{"passed" if dac else "denied"}"
+
+    audit_dict = {
+        "user": user,
+        "op": op,
+        "path": path,
+        "allowed": accepted,
+        "reason": justification_string,
+        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+    with open(AUDIT_PATH, "a") as audit_file:
+        audit_file.write(str(audit_dict))
+        audit_file.write("\n")
+
+    return accepted

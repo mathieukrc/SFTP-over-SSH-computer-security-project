@@ -3,6 +3,7 @@ import asyncio, asyncssh, os, struct, stat
 import logging, traceback
 
 from auth import check_password
+from policy import authorize
 
 # Console debug logging for AsyncSSH
 logging.basicConfig(
@@ -14,10 +15,10 @@ logging.getLogger("asyncssh").setLevel(logging.DEBUG)
 logging.getLogger("asyncio").setLevel(logging.INFO)
 
 
-HOST_KEY_PATH = './ssh_host_ed25519_key'
+HOST_KEY_PATH = 'server/ssh_host_ed25519_key'
 LISTEN_HOST, LISTEN_PORT = '', 2222
 SFTP_SUBSYSTEM_NAME = 'sftp'
-JAIL_ROOT = os.path.abspath('./sftp_root')
+JAIL_ROOT = os.path.abspath('server/sftp_root')
 
 # --- SFTP constants (subset for INIT/REALPATH/OPENDIR/READDIR/CLOSE) ---
 SSH_FXP_INIT, SSH_FXP_VERSION = 1, 2
@@ -111,11 +112,12 @@ def safe_join(jroot, path_bs):
 
 
 class SFTPSession(asyncssh.SSHServerSession):
-    def __init__(self):
+    def __init__(self, username:str):
         self.buf = b""
         self.handles = Handles()
         self.initialized = False
         self._sftp_ok = False
+        self._username = username
 
     # Ensure the channel uses *binary* I/O from the start
     def connection_made(self, chan):
@@ -219,6 +221,13 @@ class SFTPSession(asyncssh.SSHServerSession):
 
             elif ptype in (SSH_FXP_STAT, SSH_FXP_LSTAT):
                 path, off = ustr(payload, off)
+
+                auth = authorize(self._username, "read", canon_sftp_path(path))
+
+                if not auth:
+                    self._send_status(req_id, SSH_FX_PERMISSION_DENIED, b"permission denied")
+                    return
+
                 full = safe_join(JAIL_ROOT, path)
                 try:
                     st = os.lstat(full) if ptype == SSH_FXP_LSTAT else os.stat(full)
@@ -231,10 +240,14 @@ class SFTPSession(asyncssh.SSHServerSession):
 
             elif ptype == SSH_FXP_OPENDIR:
                 path, off = ustr(payload, off)
-                full = safe_join(JAIL_ROOT, path)
-                entries = list(os.scandir(full))
-                handle = self.handles.add(DirHandle(entries))
-                self._chan.write(pack_pkt(SSH_FXP_HANDLE, p_u32(req_id) + handle))
+                auth = authorize(self._username, "read", canon_sftp_path(path))
+                if auth:
+                    full = safe_join(JAIL_ROOT, path)
+                    entries = list(os.scandir(full))
+                    handle = self.handles.add(DirHandle(entries))
+                    self._chan.write(pack_pkt(SSH_FXP_HANDLE, p_u32(req_id) + handle))
+                else:
+                    self._send_status(req_id, SSH_FX_PERMISSION_DENIED, b"permission denied")
 
             elif ptype == SSH_FXP_READDIR:
                 handle_bs, off = ustr(payload, off)
@@ -242,6 +255,7 @@ class SFTPSession(asyncssh.SSHServerSession):
                 if not isinstance(dh, DirHandle):
                     self._send_status(req_id, SSH_FX_FAILURE, b"bad dir handle")
                     return
+                
 
                 batch = dh.entries[dh.idx: dh.idx + 64]
                 dh.idx += len(batch)
@@ -262,6 +276,13 @@ class SFTPSession(asyncssh.SSHServerSession):
             elif ptype == SSH_FXP_MKDIR:
                 path, off = ustr(payload, off)
                 off = parse_attrs_ignore(payload, off)  # ignore attrs (mode, etc.)
+
+                auth = authorize(self._username, "write", canon_sftp_path(path))
+
+                if not auth:
+                    self._send_status(req_id, SSH_FX_PERMISSION_DENIED, b"permission denied")
+                    return
+
                 try:
                     full = safe_join(JAIL_ROOT, path)  # map "/demo" -> <jail>\demo
                     # Debug (optional): print to console so you can see the resolved path
@@ -282,6 +303,7 @@ class SFTPSession(asyncssh.SSHServerSession):
             elif ptype == SSH_FXP_OPEN:
                 print("[FXP_OPEN] request started")
                 filename, off = ustr(payload, off)
+
                 pflags, off = u32(payload, off)
                 off = parse_attrs_ignore(payload, off)  # ignore attrs
 
@@ -293,10 +315,29 @@ class SFTPSession(asyncssh.SSHServerSession):
                 # Default to read-only; adjust based on flags
                 mode = "rb"
                 if pflags & PF_WRITE and pflags & PF_READ:
+                    read_auth = authorize(self._username, "read", canon_sftp_path(filename))
+                    write_auth = authorize(self._username, "write", canon_sftp_path(filename))
+                    
+                    if (not read_auth) or (not write_auth):
+                        self._send_status(req_id, SSH_FX_PERMISSION_DENIED, b"permission denied")
+                        return
+
                     mode = "r+b"
                 elif pflags & PF_WRITE:
+                    auth = authorize(self._username, "write", canon_sftp_path(filename))
+
+                    if not auth:
+                        self._send_status(req_id, SSH_FX_PERMISSION_DENIED, b"permission denied")
+                        return
+
                     mode = "r+b"
                 elif pflags & PF_READ:
+                    auth = authorize(self._username, "read", canon_sftp_path(filename))
+
+                    if not auth:
+                        self._send_status(req_id, SSH_FX_PERMISSION_DENIED, b"permission denied")
+                        return
+
                     mode = "rb"
 
                 if pflags & PF_CREAT:
@@ -375,10 +416,14 @@ class Server(asyncssh.SSHServer):
         return True
 
     def validate_password(self, username, password):
-        return validate_user_password(username, password)
+        if validate_user_password(username, password):
+            self._username = username
+            return True
+        else:
+            return False
 
     def session_requested(self):
-        return SFTPSession()
+        return SFTPSession(self._username)
 
 async def main():
     os.makedirs(JAIL_ROOT, exist_ok=True)
