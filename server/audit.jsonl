@@ -1,3 +1,4 @@
-{'user': 'bob', 'op': 'write', 'path': '/baba', 'allowed': False, 'reason': 'RBAC:denied - MAC:passed - DAC:denied', 'timestamp': '2025-11-18 13:18:26'}
-{'user': 'bob', 'op': 'read', 'path': '/', 'allowed': False, 'reason': 'RBAC:denied - MAC:passed - DAC:passed', 'timestamp': '2025-11-18 13:21:55'}
-{'user': 'bob', 'op': 'read', 'path': '/', 'allowed': False, 'reason': 'RBAC:denied - MAC:passed - DAC:passed', 'timestamp': '2025-11-18 13:22:46'}
+{"user": "alice", "op": "read", "path": "/", "allowed": true, "reason": "RBAC:passed - MAC:passed - DAC:passed", "timestamp": "2025-11-18 18:50:44"}
+{"user": "eve", "op": "read", "path": "/confidential/secret.txt", "allowed": false, "reason": "RBAC:denied - MAC:denied - DAC:denied", "timestamp": "2025-11-18 18:50:44"}
+{"user": "bob", "op": "read", "path": "/internal/projects/file.txt", "allowed": true, "reason": "RBAC:passed - MAC:passed - DAC:passed", "timestamp": "2025-11-18 18:50:44"}
+{"user": "alice", "op": "write", "path": "/admin/configs/server.conf", "allowed": false, "reason": "RBAC:denied - MAC:passed - DAC:denied", "timestamp": "2025-11-18 18:50:44"}

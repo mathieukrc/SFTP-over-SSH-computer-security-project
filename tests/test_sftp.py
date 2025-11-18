@@ -428,16 +428,7 @@ class TestCompositePolicies:
 class TestAuditLogging:
     """Audit logging tests - verify access decisions are logged"""
     
-    @pytest.fixture
-    def audit_log_file(self):
-        """Create temporary audit log file"""
-        with open(AUDIT_PATH, "r") as audit_file:
-            opened_audit = []
-            for line in audit_file:
-                opened_audit.append(json.loads(line))
-            return opened_audit[-1]
-    
-    def test_allow_decision_creates_audit_record(self, audit_log_file):
+    def test_allow_decision_creates_audit_record(self):
         """Audit: Allow decision creates audit record with correct fields"""
         # This is a placeholder for actual audit implementation
         # Expected fields: timestamp, user, resource, action, decision, policies
@@ -474,7 +465,7 @@ class TestAuditLogging:
             entry = opened_audit[-1]
         assert log_entry == entry
     
-    def test_deny_decision_creates_audit_record(self, audit_log_file):
+    def test_deny_decision_creates_audit_record(self):
         """Audit: Deny decision creates audit record with correct fields"""
         # Simulate a deny decision
         user = "eve"
@@ -508,7 +499,7 @@ class TestAuditLogging:
             entry = opened_audit[-1]
         assert log_entry == entry
     
-    def test_audit_record_contains_all_policy_results(self, audit_log_file):
+    def test_audit_record_contains_all_policy_results(self):
         """Audit: Record contains individual results from DAC, MAC, and RBAC"""
         user = "bob"
         resource = "/internal/projects/file.txt"
@@ -532,7 +523,7 @@ class TestAuditLogging:
             entry = opened_audit[-1]
         assert entry.get("reason",None) != None
     
-    def test_audit_includes_timestamp_and_session_info(self, audit_log_file):
+    def test_audit_includes_timestamp_and_session_info(self):
         """Audit: Record includes timestamp and session information"""
         user = "alice"
         resource = "/admin/configs/server.conf"
