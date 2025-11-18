@@ -7,6 +7,11 @@ host = None
 port = None
 username = None
 
+async def run_client() -> None:
+    async with asyncssh.connect(host='127.0.0.0', port=2222, username="bob", password="test", known_hosts=None) as conn:
+        async with conn.start_sftp_client() as sftp:
+            await sftp.get('test/read_only/readonly.txt')
+
 async def perform_action(input_text:str, sftp:asyncssh.SFTPClient) -> Tuple[bool, bool, str]:
     parameters = input_text.split(" ")
 
@@ -94,7 +99,7 @@ async def perform_action(input_text:str, sftp:asyncssh.SFTPClient) -> Tuple[bool
 async def run_cli():
     password = input("Enter password: ")
     try:
-        async with asyncssh.connect(host=host, port=port, username=username, password=password, known_hosts=(["server/ssh_host_ed25519_key.pub"], [], [])) as conn:
+        async with asyncssh.connect(host=host, port=port, username=username, password=password, known_hosts=None) as conn:
             async with conn.start_sftp_client() as sftp:
                 print("Successfully connected")
                 while True:
@@ -108,7 +113,7 @@ async def run_cli():
                         break
 
     except Exception as e:
-        print("Unsuccessful attempt")
+        print("Invalid connection attempt.")
 
 if __name__ == "__main__":
     for i in range(1, len(sys.argv) - 1, 2):
