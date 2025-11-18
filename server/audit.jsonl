@@ -1,0 +1,3 @@
+{'user': 'bob', 'op': 'write', 'path': '/baba', 'allowed': False, 'reason': 'RBAC:denied - MAC:passed - DAC:denied', 'timestamp': '2025-11-18 13:18:26'}
+{'user': 'bob', 'op': 'read', 'path': '/', 'allowed': False, 'reason': 'RBAC:denied - MAC:passed - DAC:passed', 'timestamp': '2025-11-18 13:21:55'}
+{'user': 'bob', 'op': 'read', 'path': '/', 'allowed': False, 'reason': 'RBAC:denied - MAC:passed - DAC:passed', 'timestamp': '2025-11-18 13:22:46'}

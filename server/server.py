@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import asyncio, asyncssh, os, struct, stat
+import time
 import logging, traceback
 
 from auth import check_password
@@ -41,6 +42,8 @@ SSH_FXP_LSTAT   = 7
 SSH_FXP_FSTAT   = 8
 SSH_FXP_STAT    = 17
 SSH_FXP_ATTRS   = 105
+
+AUTH_DELAY = 0.1
 
 
 def parse_attrs_ignore(buf, off):
@@ -405,7 +408,9 @@ class SFTPSession(asyncssh.SSHServerSession):
 # --- Password auth implemented on the server class (no keyword args needed) ---
 def validate_user_password(username, password):
     # TODO: replace with Argon2 verify, lockout, rate-limits, audit, salted, peppered, perhaps, mfa?
-    return check_password(username, password)
+    
+
+        return check_password(username, password)
 
 class Server(asyncssh.SSHServer):
     # Tell AsyncSSH we will do user auth:
@@ -416,8 +421,12 @@ class Server(asyncssh.SSHServer):
         return True
 
     def validate_password(self, username, password):
-        if validate_user_password(username, password):
+        last_time = float(open("server/last_attempt.txt", "r").read().strip())
+
+        if time.time() - last_time > AUTH_DELAY and validate_user_password(username, password):
             self._username = username
+            with open("server/last_attempt.txt", "w") as file:
+                file.write(str(time.time()))
             return True
         else:
             return False
