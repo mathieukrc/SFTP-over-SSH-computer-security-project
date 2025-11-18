@@ -6,11 +6,7 @@ import secrets
 import base64
 from pathlib import Path
 
-def create_directory_structure():
-    """Create the jail_root directory structure for testing."""
-    
-    # Base directories with descriptions
-    directories = [
+directories = [
         # Public area - accessible to all
         'sftp_root/public',
         'sftp_root/public/announcements',
@@ -67,11 +63,13 @@ def create_directory_structure():
         'sftp_root/test/write_only',
         'sftp_root/test/no_access',
     ]
+
+def create_directory_structure():
+    """Create the jail_root directory structure for testing."""   
     
     print("Creating directory structure...")
     for dir_path in directories:
         os.makedirs(dir_path, exist_ok=True)
-        print(f"  ✓ Created: {dir_path}")
     
     # Create sample files with different content
     sample_files = {
@@ -110,11 +108,9 @@ def create_directory_structure():
         'sftp_root/test/no_access/forbidden.txt': 'This file should not be accessible to regular users',
     }
     
-    print("\nCreating sample files...")
     for file_path, content in sample_files.items():
         with open(file_path, 'w') as f:
             f.write(content)
-        print(f"  ✓ Created: {file_path}")
     
     print(f"\n✅ Created {len(directories)} directories and {len(sample_files)} files")
 

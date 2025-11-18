@@ -6,6 +6,8 @@ import logging, traceback
 from auth import check_password
 from policy import authorize
 
+from setup_environment import create_directory_structure
+
 # Console debug logging for AsyncSSH
 logging.basicConfig(
     level=logging.DEBUG,  # or INFO
@@ -446,6 +448,7 @@ async def main():
     await asyncio.Event().wait()
 
 if __name__ == "__main__":
+    create_directory_structure()
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):

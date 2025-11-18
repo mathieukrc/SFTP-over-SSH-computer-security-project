@@ -2,7 +2,7 @@ import json
 import csv
 from typing import Tuple, Union
 from datetime import datetime
-from _pytest.stash import T
+
 def load_RBAC_helper(user_roles_path, role_perms_path):
     opened_json = None
     opened_csv = None
@@ -26,6 +26,7 @@ def load_RBAC_helper(user_roles_path, role_perms_path):
                         if role not in RBAC_policy[item[0]]:
                             RBAC_policy[item[0]][role] = {}
                         RBAC_policy[item[0]][role][resource] = perms
+    print("Loaded RBAC file")
     return RBAC_policy, paths
 """
 THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
@@ -63,11 +64,12 @@ def RBAC_path_helper(file_path, paths):
             best_match_length = len(path_parts)
     
     return best_match
+
+RBAC_policy, paths = load_RBAC_helper("server/data/user_roles.json","server/data/role_perms.csv")
 """  
 NEED TO IMPLEMENT ALLOWED AND DENIED PERMISSION OVERRIDES
 """
 def RBAC(user, file_path, action,allow_dict=None,deny_dict=None):
-    RBAC_policy, paths = load_RBAC_helper("server/data/user_roles.json","server/data/role_perms.csv")
     matched_path = RBAC_path_helper(file_path,paths)
 
     # Check deny_dict with parent paths
@@ -108,7 +110,10 @@ def RBAC(user, file_path, action,allow_dict=None,deny_dict=None):
 def load_MAC_helper(mac_labels_path):
     with open(mac_labels_path) as json_file:
         json_opened = json.load(json_file)
+        print("Loaded MAC file")
         return json_opened
+
+MAC_policy = load_MAC_helper("server/data/mac_labels.json")
 """
 THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
 """
@@ -150,7 +155,6 @@ MAC AT THE MOMENT ALLOWS PEOPLE TO ACCESS FILES IF NOT OTHERWISE SPECIFIED
 IF MAC DEFAULT LABEL AND CLEARANCE CHANGES UPDATE THIS!!!!
 """
 def MAC(user, file_path):
-    MAC_policy = load_MAC_helper("server/data/mac_labels.json")
     MAC_user_policy = MAC_policy["user_clearances"]
     MAC_file_policy = MAC_policy["path_labels"]
     file_path = MAC_path_helper(file_path,MAC_file_policy)
@@ -169,6 +173,7 @@ def load_DAC_helper(dac_owners_path):
         csv_opened = csv.reader(csv_file,delimiter=",")
         for row in csv_opened:
             csv_stored.append(row)
+    print("Loaded DAC file")
     return csv_stored
 """
 THIS IS TERRIBLE PLEASE LET ME KNOW IF YOU FIGURE OUT A BETTER WAY
@@ -206,12 +211,16 @@ def DAC_path_helper(file_path, DAC_policy):
             best_match_length = len(path_parts)
     
     return best_match
+
+
+DAC_policy = load_DAC_helper("server/data/dac_owners.csv")
+with open("server/data/user_roles.json","r") as json_file:
+        json_opened = json.load(json_file)
+print("Loaded user roles")
 """
 VERY UGLY SOLUTION MAYBE MAKE IT MORE NICE
 """
 def DAC(user,file_path,action):
-    with open("server/data/user_roles.json","r") as json_file:
-        json_opened = json.load(json_file)
     user_roles = json_opened.get(user,None)
     mode_dict = {7:["r","w","x"],
                  6:["r","w"],
@@ -221,7 +230,6 @@ def DAC(user,file_path,action):
                  2:["w"],
                  1:["x"],
                  0:[]}
-    DAC_policy = load_DAC_helper("server/data/dac_owners.csv")
     file_path = DAC_path_helper(file_path,DAC_policy)
     for entry in DAC_policy:
         if entry[0] == file_path:
