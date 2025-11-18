@@ -12,5 +12,12 @@
   ],
   "eve": [
     "guest"
+  ],
+  "stephen": [
+    "manager",
+    "hr"
+  ],
+  "joseph": [
+    "root"
   ]
 }

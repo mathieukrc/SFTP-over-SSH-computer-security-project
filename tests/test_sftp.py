@@ -151,7 +151,7 @@ class TestDAC:
         """DAC: Group member can read file when group has read permission"""
         # bob is in bob group, /home/bob has mode 750 (rwxr-x---)
         # bob as group member should have read access
-        result = DAC("bob", "/home/bob/documents/draft.txt", "r")
+        result = DAC("bob", "/internal/projects/project_alpha/README.md", "r")
         assert result == True, "Group member should be able to read with group permission"
     
     def test_directory_execute_bit_affects_listing(self):
@@ -344,8 +344,11 @@ class TestRBAC:
         # alice has both admin and auditor roles
         # admin gives full access to /admin
         # auditor gives read access to /
-        result = RBAC("alice", "/", "write")
-        assert result == True, "Multiple roles should combine permissions"
+        result1 = RBAC("stephen", "/shared", "write")
+        assert result1 == True, "Multiple roles should combine permissions"
+        result2 = RBAC("stephen", "/confidential/hr", "write")
+        assert result2
+
 
 
 class TestCompositePolicies:
@@ -384,7 +387,7 @@ class TestCompositePolicies:
         # charlie (analyst) has no RBAC permission for /admin
         # even if DAC and MAC might allow
         
-        result = composite_rule("charlie", "/admin/configs/server.conf", "read")
+        result = composite_rule("joseph", "/admin/configs/server.conf", "read")
         assert result == False, "RBAC denial should override other allows"
     
     def test_path_traversal_denied_by_composite(self):

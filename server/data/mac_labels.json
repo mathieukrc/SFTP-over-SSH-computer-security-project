@@ -34,7 +34,8 @@
   "user_clearances": {
     "alice": "secret",
     "bob": "internal",
-    "eve": "public"
+    "eve": "public",
+    "joseph": "confidential"
   },
   "default_label": "public",
   "default_clearance": "public"
