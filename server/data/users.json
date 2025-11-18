@@ -1,0 +1,80 @@
+{
+  "users": [
+    {
+      "username": "alice",
+      "salt": "LRkwrGGCdz83xUkcy7Dhdg==",
+      "password_hash": "DetWqpi4eiEF3CvumIxmQAGYhwz4yWu3oRRNWRLHXkw=",
+      "uid": 1001,
+      "gid": 1001,
+      "groups": [
+        "alice",
+        "admin",
+        "executives",
+        "employees"
+      ],
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 100000,
+      "description": "Alice Admin - Full system access"
+    },
+    {
+      "username": "bob",
+      "salt": "oV6U6QotqO1oNMOMEI4I2w==",
+      "password_hash": "v6mSuPXtuR+0PIXaYcEg7Cx/xJl4ITEGCd8bTvDG4Kw=",
+      "uid": 1002,
+      "gid": 1002,
+      "groups": [
+        "bob",
+        "developers",
+        "employees",
+        "team_alpha"
+      ],
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 100000,
+      "description": "Bob Developer - Internal access"
+    },
+    {
+      "username": "eve",
+      "salt": "a1ui6ABBGtCTxwjZ2gPmSQ==",
+      "password_hash": "aOiPnUz/tdMzzZ2KO6M/S2PjaL4ZrLBg09yW8glK9yA=",
+      "uid": 1003,
+      "gid": 1003,
+      "groups": [
+        "eve",
+        "users"
+      ],
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 100000,
+      "description": "Eve Guest - Public access only"
+    },
+    {
+      "username": "charlie",
+      "salt": "0NarRvX+9RDQB8W2t/opAw==",
+      "password_hash": "2tJfaWka+Bgmz+0/lojOcOP5Ggas56oasSPtMIBVKHI=",
+      "uid": 1004,
+      "gid": 1004,
+      "groups": [
+        "charlie",
+        "analysts",
+        "employees",
+        "team_beta"
+      ],
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 100000,
+      "description": "Charlie Analyst - Confidential read access"
+    },
+    {
+      "username": "admin",
+      "salt": "8SslCw9qWsGjAzar0P8E4Q==",
+      "password_hash": "kjrozTISc7IWdJAYEX/lD+ldz0CpnJ0hEvLLqIHpCVU=",
+      "uid": 0,
+      "gid": 0,
+      "groups": [
+        "root",
+        "admin"
+      ],
+      "algorithm": "pbkdf2_sha256",
+      "iterations": 100000,
+      "description": "System Administrator"
+    }
+  ]
+}

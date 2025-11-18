@@ -1,0 +1,23 @@
+{
+  "alice": [
+    "admin",
+    "auditor"
+  ],
+  "bob": [
+    "developer",
+    "employee"
+  ],
+  "eve": [
+    "guest"
+  ],
+  "charlie": [
+    "analyst"
+  ],
+  "stephen": [
+    "manager",
+    "hr"
+  ],
+  "joseph": [
+    "root"
+  ]
+}
