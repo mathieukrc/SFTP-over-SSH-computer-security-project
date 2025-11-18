@@ -15,17 +15,18 @@ import csv
 import tempfile
 import shutil
 from pathlib import Path
+from datetime import datetime
 
 # Add server module to path for testing policy functions
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'server'))
 
-from policy import DAC, MAC, RBAC, composite_rule
+from policy import DAC, MAC, RBAC, composite_rule, authorize
 
 
 # Test configuration
 TEST_HOST = 'localhost'
 TEST_PORT = 2222
-
+AUDIT_PATH = "server/audit.jsonl"
 # Test users with different clearances and roles
 TEST_USERS = {
     'alice': {'password': 'alicepass', 'clearance': 'secret', 'roles': ['admin', 'auditor']},
@@ -425,10 +426,13 @@ class TestAuditLogging:
     """Audit logging tests - verify access decisions are logged"""
     
     @pytest.fixture
-    def audit_log_file(self, tmp_path):
+    def audit_log_file(self):
         """Create temporary audit log file"""
-        log_file = tmp_path / "audit.log"
-        return str(log_file)
+        with open(AUDIT_PATH, "r") as audit_file:
+            opened_audit = []
+            for line in audit_file:
+                opened_audit.append(json.loads(line))
+            return opened_audit[-1]
     
     def test_allow_decision_creates_audit_record(self, audit_log_file):
         """Audit: Allow decision creates audit record with correct fields"""
@@ -441,7 +445,7 @@ class TestAuditLogging:
         action = "read"
         
         # Call composite rule (which should trigger audit)
-        decision = composite_rule(user, resource, action)
+        decision = authorize(user,action,resource)
         
         # In actual implementation, verify audit log contains:
         # - timestamp
@@ -452,7 +456,20 @@ class TestAuditLogging:
         # - dac_result, mac_result, rbac_result
         
         assert decision == True, "Admin should be able to read admin files"
-        # TODO: Read audit log and verify record exists with correct fields
+        log_entry = {
+        "user": user,
+        "op": action,
+        "path": resource,
+        "allowed": decision,
+        "reason": "RBAC:passed - MAC:passed - DAC:passed",
+        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        with open(AUDIT_PATH, "r") as audit_file:
+            opened_audit = []
+            for line in audit_file:
+                opened_audit.append(json.loads(line))
+            entry = opened_audit[-1]
+        assert log_entry == entry
     
     def test_deny_decision_creates_audit_record(self, audit_log_file):
         """Audit: Deny decision creates audit record with correct fields"""
@@ -462,7 +479,7 @@ class TestAuditLogging:
         action = "read"
         
         # Call composite rule (which should trigger audit)
-        decision = composite_rule(user, resource, action)
+        decision = authorize(user,action,resource)
         
         # In actual implementation, verify audit log contains:
         # - timestamp
@@ -473,7 +490,20 @@ class TestAuditLogging:
         # - reason: MAC denial (insufficient clearance)
         
         assert decision == False, "Eve should not access confidential files"
-        # TODO: Read audit log and verify record exists with correct fields
+        log_entry = {
+        "user": user,
+        "op": action,
+        "path": resource,
+        "allowed": decision,
+        "reason": "RBAC:denied - MAC:denied - DAC:denied",
+        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+        with open(AUDIT_PATH, "r") as audit_file:
+            opened_audit = []
+            for line in audit_file:
+                opened_audit.append(json.loads(line))
+            entry = opened_audit[-1]
+        assert log_entry == entry
     
     def test_audit_record_contains_all_policy_results(self, audit_log_file):
         """Audit: Record contains individual results from DAC, MAC, and RBAC"""
@@ -482,7 +512,7 @@ class TestAuditLogging:
         action = "read"
         
         # This should trigger evaluation of all three policies
-        decision = composite_rule(user, resource, action)
+        decision = authorize(user,action,resource)
         
         # Expected audit record should contain:
         # - dac_result: True/False
@@ -492,6 +522,12 @@ class TestAuditLogging:
         
         # TODO: Verify audit log contains breakdown of each policy decision
         assert isinstance(decision, bool), "Should return a decision"
+        with open(AUDIT_PATH, "r") as audit_file:
+            opened_audit = []
+            for line in audit_file:
+                opened_audit.append(json.loads(line))
+            entry = opened_audit[-1]
+        assert entry.get("reason",None) != None
     
     def test_audit_includes_timestamp_and_session_info(self, audit_log_file):
         """Audit: Record includes timestamp and session information"""
@@ -499,7 +535,7 @@ class TestAuditLogging:
         resource = "/admin/configs/server.conf"
         action = "write"
         
-        decision = composite_rule(user, resource, action)
+        decision = authorize(user,action,resource)
         
         # Expected fields:
         # - timestamp: ISO 8601 format
@@ -507,31 +543,14 @@ class TestAuditLogging:
         # - session_id: (if available from SFTP session)
         # - source_ip: (if available)
         
-        # TODO: Verify audit log contains timestamp and session info
         assert isinstance(decision, bool), "Should return a decision"
-    
-    def test_failed_auth_creates_audit_record(self, audit_log_file):
-        """Audit: Failed authentication attempt creates audit record"""
-        # This test would require integration with auth module
-        # Expected record:
-        # - timestamp
-        # - username: attempted username
-        # - event: authentication_failed
-        # - source_ip
-        # - reason: invalid_password / invalid_username
-        
-        # TODO: Implement when auth module has audit integration
-        pass
-    
-    def test_audit_log_is_tamper_evident(self, audit_log_file):
-        """Audit: Log entries are tamper-evident (append-only, signed, or hashed)"""
-        # In a production system, audit logs should be:
-        # - Append-only (no modifications or deletions)
-        # - Optionally signed or hashed for integrity
-        # - Stored securely with restricted access
-        
-        # TODO: Implement integrity verification
-        pass
+        with open(AUDIT_PATH, "r") as audit_file:
+            opened_audit = []
+            for line in audit_file:
+                opened_audit.append(json.loads(line))
+            entry = opened_audit[-1]
+        assert entry.get("user",None) != None
+        assert entry.get("timestamp",None) != None 
 
 
 class TestEdgeCasesAndIntegration:
