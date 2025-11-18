@@ -68,39 +68,24 @@ def RBAC_path_helper(file_path, paths):
 NEED TO IMPLEMENT ALLOWED AND DENIED PERMISSION OVERRIDES
 """
 def RBAC(user, file_path, action,allow_dict=None,deny_dict=None):
-    # Normalize the path to prevent directory traversal attacks
-    import os
-    file_path = os.path.normpath(file_path).replace('\\', '/')
-    
     RBAC_policy, paths = load_RBAC_helper("server/data/user_roles.json","server/data/role_perms.csv")
     matched_path = RBAC_path_helper(file_path,paths)
-    
-    # Build list of paths to check (from most specific to least specific)
-    paths_to_check = []
-    path_normalized = matched_path.strip('/')
-    if path_normalized:
-        parts = path_normalized.split('/')
-        for i in range(len(parts), 0, -1):
-            paths_to_check.append('/' + '/'.join(parts[:i]))
-    paths_to_check.append('/')
-    
+
     # Check deny_dict with parent paths
     if deny_dict is not None:
         user_deny = deny_dict.get(user,None)
         if user_deny is not None:
-            for check_path in paths_to_check:
-                file_path_deny = user_deny.get(check_path,None)
-                if file_path_deny is not None and action in file_path_deny:
-                    return False
+            file_path_deny = user_deny.get(matched_path,None)
+            if file_path_deny is not None and action in file_path_deny:
+                return False
     
     # Check allow_dict with parent paths
     if allow_dict is not None:
         user_allow = allow_dict.get(user,None)
         if user_allow is not None:
-            for check_path in paths_to_check:
-                file_path_allow = user_allow.get(check_path,None)
-                if file_path_allow is not None and action in file_path_allow:
-                    return True
+            file_path_allow = user_allow.get(matched_path,None)
+            if file_path_allow is not None and action in file_path_allow:
+                return True
     
     user_roles = RBAC_policy.get(user,None)
     if user_roles is None:
@@ -109,18 +94,16 @@ def RBAC(user, file_path, action,allow_dict=None,deny_dict=None):
     for role in user_roles.keys():
         role_resources = user_roles.get(role,None)
         if role_resources is not None:
-            # Check each path from most specific to least specific
-            for check_path in paths_to_check:
-                resource_perms = role_resources.get(check_path,None)
-                if resource_perms is not None:
-                    resource_perms_dict = {
-                    "read" : resource_perms[0],
-                    "write" : resource_perms[1],
-                    "delete" : resource_perms[2],
-                    "execute": resource_perms[3]
-                }
-                    if resource_perms_dict.get(action,"N") == "Y":
-                        return True
+            resource_perms = role_resources.get(matched_path,None)
+            if resource_perms is not None:
+                resource_perms_dict = {
+                "read" : resource_perms[0],
+                "write" : resource_perms[1],
+                "delete" : resource_perms[2],
+                "execute": resource_perms[3]
+            }
+                if resource_perms_dict.get(action,"N") == "Y":
+                    return True
     return False
 
 def load_MAC_helper(mac_labels_path):
@@ -168,10 +151,6 @@ MAC AT THE MOMENT ALLOWS PEOPLE TO ACCESS FILES IF NOT OTHERWISE SPECIFIED
 IF MAC DEFAULT LABEL AND CLEARANCE CHANGES UPDATE THIS!!!!
 """
 def MAC(user, file_path):
-    # Normalize the path to prevent directory traversal attacks
-    import os
-    file_path = os.path.normpath(file_path).replace('\\', '/')
-    
     MAC_policy = load_MAC_helper("server/data/mac_labels.json")
     MAC_user_policy = MAC_policy["user_clearances"]
     MAC_file_policy = MAC_policy["path_labels"]
@@ -232,10 +211,6 @@ def DAC_path_helper(file_path, DAC_policy):
 VERY UGLY SOLUTION MAYBE MAKE IT MORE NICE
 """
 def DAC(user,file_path,action):
-    # Normalize the path to prevent directory traversal attacks
-    import os
-    file_path = os.path.normpath(file_path).replace('\\', '/')
-    
     with open("server/data/user_roles.json","r") as json_file:
         json_opened = json.load(json_file)
     user_roles = json_opened.get(user,None)
@@ -275,7 +250,6 @@ def DAC(user,file_path,action):
             if action in mode_dict[int(mode[2])]:
                 return True
     return False
-
 def composite_rule(user,file_path,action, justify=False) -> Union[bool, Tuple[bool, bool, bool, bool]]:
     DAC_dict = {
         "read" : "r",

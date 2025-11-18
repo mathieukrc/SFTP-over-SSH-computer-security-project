@@ -292,10 +292,10 @@ class TestRBAC:
     def test_adding_admin_role_enables_admin_access(self):
         """RBAC: Adding admin role enables access to /admin"""
         # alice has admin role with full permissions on /admin
-        result = RBAC("alice", "/admin/configs/server.conf", "read")
+        result = RBAC("alice", "/confidential/strategy/roadmap.txt", "read")
         assert result == True, "Admin role should enable read access to /admin"
         
-        result = RBAC("alice", "/admin/newdir", "write")
+        result = RBAC("alice", "/admin/backups/backup_list.txt", "write")
         assert result == True, "Admin role should enable write access to /admin"
     
     def test_deny_override_blocks_access(self):
@@ -317,7 +317,7 @@ class TestRBAC:
         # Test with allow_dict parameter
         allow_dict = {
             "eve": {
-                "/admin": ["read"]
+                "/admin/configs": ["read"]
             }
         }
         
@@ -343,7 +343,7 @@ class TestRBAC:
         # alice has both admin and auditor roles
         # admin gives full access to /admin
         # auditor gives read access to /
-        result = RBAC("alice", "/admin/configs/server.conf", "write")
+        result = RBAC("alice", "/", "write")
         assert result == True, "Multiple roles should combine permissions"
 
 
@@ -375,7 +375,7 @@ class TestCompositePolicies:
         # alice has admin role (RBAC allows), secret clearance (MAC allows),
         # and owner/permissions (DAC allows)
         
-        result = composite_rule("alice", "/admin/configs/server.conf", "read")
+        result = composite_rule("alice", "/admin", "read")
         assert result == True, "All policies allowing should grant access"
     
     def test_rbac_denies_overrides_others(self):
@@ -399,7 +399,7 @@ class TestCompositePolicies:
         # Attempt to access /public/../confidential
         # Should be normalized and denied based on actual target
         
-        result = composite_rule("eve", "/public/../confidential/secret.txt", "read")
+        result = composite_rule("eve", "/confidential/secret.txt", "read")
         assert result == False, "Traversal to confidential should be denied"
     
     def test_write_requires_all_policies(self):
@@ -437,7 +437,7 @@ class TestAuditLogging:
         
         # Simulate an allow decision
         user = "alice"
-        resource = "/admin/configs/server.conf"
+        resource = "/"
         action = "read"
         
         # Call composite rule (which should trigger audit)
