@@ -3,7 +3,7 @@
     {
       "username": "alice",
       "salt": "LRkwrGGCdz83xUkcy7Dhdg==",
-      "password_hash": "DetWqpi4eiEF3CvumIxmQAGYhwz4yWu3oRRNWRLHXkw=",
+      "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$TFJrd3JHR0NkejgzeFVrY3k3RGhkZz09$pFp5YFzxUm+VmNHdTCLIRF9uSIh5JnUietZrnqcz/qE",
       "uid": 1001,
       "gid": 1001,
       "groups": [
@@ -19,7 +19,7 @@
     {
       "username": "bob",
       "salt": "oV6U6QotqO1oNMOMEI4I2w==",
-      "password_hash": "v6mSuPXtuR+0PIXaYcEg7Cx/xJl4ITEGCd8bTvDG4Kw=",
+      "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$b1Y2VTZRb3RxTzFvTk1PTUVJNEkydz09$zJjrxFJ+nBGFDzo3kuWNi1vwaQxNjfoKgcTG9NdisSk",
       "uid": 1002,
       "gid": 1002,
       "groups": [
@@ -35,7 +35,7 @@
     {
       "username": "eve",
       "salt": "a1ui6ABBGtCTxwjZ2gPmSQ==",
-      "password_hash": "aOiPnUz/tdMzzZ2KO6M/S2PjaL4ZrLBg09yW8glK9yA=",
+      "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$YTF1aTZBQkJHdENUeHdqWjJnUG1TUT09$wbIEsQWucTmeePQOFBZomuTsiqOdn/xbZGmtBS69XTk",
       "uid": 1003,
       "gid": 1003,
       "groups": [
@@ -49,7 +49,7 @@
     {
       "username": "charlie",
       "salt": "0NarRvX+9RDQB8W2t/opAw==",
-      "password_hash": "2tJfaWka+Bgmz+0/lojOcOP5Ggas56oasSPtMIBVKHI=",
+      "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$ME5hclJ2WCs5UkRRQjhXMnQvb3BBdz09$qkQ/ywHnj6jh0UB/Ee2ly1sHGwYxHJa4tOJooiM82qY",
       "uid": 1004,
       "gid": 1004,
       "groups": [
@@ -65,7 +65,7 @@
     {
       "username": "admin",
       "salt": "8SslCw9qWsGjAzar0P8E4Q==",
-      "password_hash": "kjrozTISc7IWdJAYEX/lD+ldz0CpnJ0hEvLLqIHpCVU=",
+      "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$OFNzbEN3OXFXc0dqQXphcjBQOEU0UT09$wQoGqjk12V8bhx+Km8wMf7Zhw6w/iwWS867wgkQKLR0",
       "uid": 0,
       "gid": 0,
       "groups": [

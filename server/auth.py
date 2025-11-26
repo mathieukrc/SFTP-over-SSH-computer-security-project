@@ -3,7 +3,7 @@ import json
 import argon2
 
 USER_PATH = "server/data/users.json"
-user_file = json.load(open(USER_PATH, "r"))
+user_file = json.load(open(USER_PATH, "r"))["users"]
 print("Loaded user file")
 
 
@@ -20,5 +20,4 @@ def check_password(username: str, password: str) -> bool:
             pass
 
     return False
-
 
